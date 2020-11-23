@@ -57,6 +57,15 @@ class Client:
                                   DestinationCidrBlock='0.0.0.0/0')
         return routetable
 
+    def associate_route_table(self):
+        assoc_pub_route_table = self._client.associate_route_table(RouteTableId=self.pub_routetable_id,
+                                                                   SubnetId=self.pub_subnet_id)
+        self.assoc_pub_route_id = assoc_pub_route_table['AssociationId']
+        return assoc_pub_route_table
+
+    def disassociate_route_table(self):
+        self._client.disassociate_route_table(AssociationId=self.assoc_pub_route_id)
+
     def delete_pub_routetable(self):
         self._client.delete_route_table(RouteTableId=self.pub_routetable_id)
 

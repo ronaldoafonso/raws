@@ -1,6 +1,4 @@
 
-import time
-
 from client import Client
 
 
@@ -16,9 +14,12 @@ def main():
     print(f'Public subnet: {rc_pubsub}.')
     rc_pub_routetable = client.create_pub_routetable()
     print(f'Public route table: {rc_pub_routetable}.')
+    rc_assoc_pub_routetable = client.associate_route_table()
+    print(f'Associate route table: {rc_assoc_pub_routetable}.')
 
-    time.sleep(30)
+    dummy = input('Waiting')
 
+    client.disassociate_route_table()
     client.delete_pub_routetable()
     client.delete_pubsub()
     client.delete_internet_gateway()
