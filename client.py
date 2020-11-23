@@ -52,6 +52,9 @@ class Client:
                     {'Key': 'Name', 'Value': 'ra-pub-routetable'}
                 ]
         )
+        self._client.create_route(RouteTableId=self.pub_routetable_id,
+                                  GatewayId=self.igw_id,
+                                  DestinationCidrBlock='0.0.0.0/0')
         return routetable
 
     def delete_pub_routetable(self):
