@@ -14,9 +14,12 @@ def main():
     print(f'Internet Gateway: {rc_igw}.')
     rc_pubsub = client.create_pubsub('10.0.0.0/24')
     print(f'Public subnet: {rc_pubsub}.')
+    rc_pub_routetable = client.create_pub_routetable()
+    print(f'Public route table: {rc_pub_routetable}.')
 
     time.sleep(30)
 
+    client.delete_pub_routetable()
     client.delete_pubsub()
     client.delete_internet_gateway()
     rc_delete_vpc = client.delete_vpc()

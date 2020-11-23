@@ -43,6 +43,20 @@ class Client:
         )
         return subnet
 
+    def create_pub_routetable(self):
+        routetable = self._client.create_route_table(VpcId=self.vpc_id)
+        self.pub_routetable_id = routetable['RouteTable']['RouteTableId']
+        self._client.create_tags(
+                Resources=[self.pub_routetable_id],
+                Tags=[
+                    {'Key': 'Name', 'Value': 'ra-pub-routetable'}
+                ]
+        )
+        return routetable
+
+    def delete_pub_routetable(self):
+        self._client.delete_route_table(RouteTableId=self.pub_routetable_id)
+
     def delete_pubsub(self):
         self._client.delete_subnet(SubnetId=self.pub_subnet_id)
 
