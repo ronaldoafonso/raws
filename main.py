@@ -12,9 +12,12 @@ def main():
     print(f'VPC tag name: {rc_name_tag}.')
     rc_igw = client.create_internet_gateway()
     print(f'Internet Gateway: {rc_igw}.')
+    rc_pubsub = client.create_pubsub('10.0.0.0/24')
+    print(f'Public subnet: {rc_pubsub}.')
 
     time.sleep(30)
 
+    client.delete_pubsub()
     client.delete_internet_gateway()
     rc_delete_vpc = client.delete_vpc()
     print(f'Delete VPC: {rc_delete_vpc}.')

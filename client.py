@@ -32,6 +32,20 @@ class Client:
         return self._client.attach_internet_gateway(InternetGatewayId=self.igw_id,
                                                     VpcId=self.vpc_id)
 
+    def create_pubsub(self, cidr_block):
+        subnet = self._client.create_subnet(CidrBlock=cidr_block, VpcId=self.vpc_id)
+        self.pub_subnet_id = subnet['Subnet']['SubnetId']
+        self._client.create_tags(
+                Resources=[self.pub_subnet_id],
+                Tags=[
+                    {'Key': 'Name', 'Value': 'ra-pub-subnet'}
+                ]
+        )
+        return subnet
+
+    def delete_pubsub(self):
+        self._client.delete_subnet(SubnetId=self.pub_subnet_id)
+
     def delete_internet_gateway(self):
         self._client.detach_internet_gateway(InternetGatewayId=self.igw_id,
                                              VpcId=self.vpc_id)
