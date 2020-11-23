@@ -41,6 +41,10 @@ class Client:
                     {'Key': 'Name', 'Value': 'ra-pub-subnet'}
                 ]
         )
+        self._client.modify_subnet_attribute(
+            MapPublicIpOnLaunch={'Value': True},
+            SubnetId=self.pub_subnet_id,
+        )
         return subnet
 
     def create_pub_routetable(self):
