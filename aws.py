@@ -47,3 +47,25 @@ class Igw(Client):
 
     def delete(self):
         self.client.delete_internet_gateway(InternetGatewayId=self.get_id())
+
+
+class Subnet(Client):
+
+    def __init__(self, public=False):
+        self.public = public
+        super().__init__()
+
+    def create(self, cidr_block, vpc_id):
+        subnet = self.client.create_subnet(
+                CidrBlock=cidr_block,
+                VpcId=vpc_id
+        )
+        self.resource_id = subnet['Subnet']['SubnetId']
+        if self.public:
+            self.client.modify_subnet_attribute(
+                MapPublicIpOnLaunch={'Value': True},
+                SubnetId=self.get_id(),
+            )
+
+    def delete(self):
+        self.client.delete_subnet(SubnetId=self.get_id())
