@@ -33,5 +33,17 @@ class Igw(Client):
         igw = self.client.create_internet_gateway()
         self.resource_id = igw['InternetGateway']['InternetGatewayId']
 
+    def attach_to_vpc(self, vpc_id):
+        self.client.attach_internet_gateway(
+            InternetGatewayId=self.get_id(),
+            VpcId=vpc_id
+        )
+
+    def detach_from_vpc(self, vpc_id):
+        self.client.detach_internet_gateway(
+            InternetGatewayId=self.get_id(),
+            VpcId=vpc_id
+        )
+
     def delete(self):
         self.client.delete_internet_gateway(InternetGatewayId=self.get_id())
