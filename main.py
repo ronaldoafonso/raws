@@ -1,30 +1,40 @@
 
-from client import Client
+from vpc import Vpc
+from igw import Igw
+from subnet import Subnet
+from routetable import RouteTable, Association
 
 
 def main():
-    client = Client()
-    vpc = client.create_vpc('10.0.0.0/16')
-    print(f'VPC {vpc}.')
-    rc_name_tag = client.add_name_tag('ra-vpc')
-    print(f'VPC tag name: {rc_name_tag}.')
-    rc_igw = client.create_internet_gateway()
-    print(f'Internet Gateway: {rc_igw}.')
-    rc_pubsub = client.create_pubsub('10.0.0.0/24')
-    print(f'Public subnet: {rc_pubsub}.')
-    rc_pub_routetable = client.create_pub_routetable()
-    print(f'Public route table: {rc_pub_routetable}.')
-    rc_assoc_pub_routetable = client.associate_route_table()
-    print(f'Associate route table: {rc_assoc_pub_routetable}.')
+    vpc = Vpc()
+    vpc.create('10.0.0.0/16')
+    vpc.tag('Name', 'ra-vpc')
+
+    igw = Igw()
+    igw.create()
+    igw.tag('Name', 'ra-igw')
+    igw.attach_to_vpc(vpc.get_id())
+
+    sub = Subnet(public=True)
+    sub.create('10.0.0.0/24', vpc.get_id())
+    sub.tag('Name', 'ra-pub-subnet')
+
+    routetable = RouteTable()
+    routetable.create(vpc.get_id())
+    routetable.tag('Name', 'ra-pub-routetable')
+    routetable.add_route(igw.get_id(), '0.0.0.0/0')
+
+    assoc = Association()
+    assoc.assoc_route_table_with_subnet(routetable.get_id(), sub.get_id())
 
     dummy = input('Waiting')
 
-    client.disassociate_route_table()
-    client.delete_pub_routetable()
-    client.delete_pubsub()
-    client.delete_internet_gateway()
-    rc_delete_vpc = client.delete_vpc()
-    print(f'Delete VPC: {rc_delete_vpc}.')
+    assoc.disassoc_route_table_with_subnet()
+    routetable.delete()
+    sub.delete()
+    igw.detach_from_vpc(vpc.get_id())
+    igw.delete()
+    vpc.delete()
 
 
 if __name__ == '__main__':
