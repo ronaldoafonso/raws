@@ -2,70 +2,16 @@
 import boto3
 
 
-class Client:
+class Aws:
 
     def __init__(self):
-        self.client = boto3.client('ec2')
+        self.aws = boto3.client('ec2')
 
     def get_id(self):
         return self.resource_id
 
     def tag(self, key, value):
-        self.client.create_tags(
+        self.aws.create_tags(
             Resources=[self.get_id()],
             Tags=[{'Key': key, 'Value': value}]
         )
-
-
-class Vpc(Client):
-
-    def create(self, cidr_block):
-        vpc = self.client.create_vpc(CidrBlock=cidr_block)
-        self.resource_id = vpc['Vpc']['VpcId']
-
-    def delete(self):
-        return self.client.delete_vpc(VpcId=self.get_id())
-
-
-class Igw(Client):
-
-    def create(self):
-        igw = self.client.create_internet_gateway()
-        self.resource_id = igw['InternetGateway']['InternetGatewayId']
-
-    def attach_to_vpc(self, vpc_id):
-        self.client.attach_internet_gateway(
-            InternetGatewayId=self.get_id(),
-            VpcId=vpc_id
-        )
-
-    def detach_from_vpc(self, vpc_id):
-        self.client.detach_internet_gateway(
-            InternetGatewayId=self.get_id(),
-            VpcId=vpc_id
-        )
-
-    def delete(self):
-        self.client.delete_internet_gateway(InternetGatewayId=self.get_id())
-
-
-class Subnet(Client):
-
-    def __init__(self, public=False):
-        self.public = public
-        super().__init__()
-
-    def create(self, cidr_block, vpc_id):
-        subnet = self.client.create_subnet(
-                CidrBlock=cidr_block,
-                VpcId=vpc_id
-        )
-        self.resource_id = subnet['Subnet']['SubnetId']
-        if self.public:
-            self.client.modify_subnet_attribute(
-                MapPublicIpOnLaunch={'Value': True},
-                SubnetId=self.get_id(),
-            )
-
-    def delete(self):
-        self.client.delete_subnet(SubnetId=self.get_id())
