@@ -15,25 +15,37 @@ def main():
     igw.tag('Name', 'ra-igw')
     igw.attach_to_vpc(vpc.get_id())
 
-    sub = Subnet(public=True)
-    sub.create('10.0.0.0/24', vpc.get_id())
-    sub.tag('Name', 'ra-pub-subnet')
+    pub_subnet = Subnet()
+    pub_subnet.create('10.0.0.0/24', vpc.get_id())
+    pub_subnet.tag('Name', 'ra-pub-subnet')
+    pub_rt = RouteTable()
+    pub_rt.create(vpc.get_id())
+    pub_rt.tag('Name', 'ra-pub-routetable')
+    pub_rt.add_route(igw.get_id(), '0.0.0.0/0')
+    pub_assoc = Association()
+    pub_assoc.assoc_route_table_with_subnet(pub_rt.get_id(), pub_subnet.get_id())
 
-    routetable = RouteTable()
-    routetable.create(vpc.get_id())
-    routetable.tag('Name', 'ra-pub-routetable')
-    routetable.add_route(igw.get_id(), '0.0.0.0/0')
-
-    assoc = Association()
-    assoc.assoc_route_table_with_subnet(routetable.get_id(), sub.get_id())
+    priv_subnet = Subnet()
+    priv_subnet.create('10.0.1.0/24', vpc.get_id(), public=False)
+    priv_subnet.tag('Name', 'ra-priv-subnet')
+    priv_rt = RouteTable()
+    priv_rt.create(vpc.get_id())
+    priv_rt.tag('Name', 'ra-priv-routetable')
+    priv_assoc = Association()
+    priv_assoc.assoc_route_table_with_subnet(priv_rt.get_id(), priv_subnet.get_id())
 
     dummy = input('Waiting')
 
-    assoc.disassoc_route_table_with_subnet()
-    routetable.delete()
-    sub.delete()
+    priv_assoc.disassoc_route_table_with_subnet()
+    priv_rt.delete()
+    priv_subnet.delete()
+
+    pub_assoc.disassoc_route_table_with_subnet()
+    pub_rt.delete()
+    pub_subnet.delete()
     igw.detach_from_vpc(vpc.get_id())
     igw.delete()
+
     vpc.delete()
 
 
