@@ -9,4 +9,4 @@ class Vpc(Aws):
         self.resource_id = vpc['Vpc']['VpcId']
 
     def delete(self):
-        return self.aws.delete_vpc(VpcId=self.get_id())
+        self.aws.delete_vpc(VpcId=self.get_id())
