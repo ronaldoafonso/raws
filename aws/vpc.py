@@ -1,5 +1,5 @@
 
-from aws import Aws
+from .aws import Aws
 
 
 class Vpc(Aws):

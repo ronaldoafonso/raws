@@ -1,8 +1,8 @@
 
-from vpc import Vpc
-from igw import Igw
-from subnet import Subnet
-from routetable import RouteTable, Association
+from aws.vpc import Vpc
+from aws.igw import Igw
+from aws.subnet import Subnet
+from aws.routetable import RouteTable, Association
 
 
 def main():
