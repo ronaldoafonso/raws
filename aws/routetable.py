@@ -4,8 +4,12 @@ from .aws import Aws
 
 class RouteTable(Aws):
 
-    def create(self, vpc_id):
-        routetable = self.aws.create_route_table(VpcId=vpc_id)
+    def __init__(self, vpc_id):
+        self.vpc_id = vpc_id
+        super().__init__()
+
+    def create(self):
+        routetable = self.aws.create_route_table(VpcId=self.vpc_id)
         self.resource_id = routetable['RouteTable']['RouteTableId']
 
     def add_route(self, igw_id, dest_cidr_block):
