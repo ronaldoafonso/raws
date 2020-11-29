@@ -34,8 +34,8 @@ def main():
     priv_assoc = Association()
     priv_assoc.assoc_route_table_with_subnet(priv_rt.get_id(), priv_subnet.get_id())
 
-    output = f'VPD id: {vpc.get_id()}.\n' + \
-             f'PUB SUBNET id: {pub_subnet.get_id()}.\n' + \
+    output = f'VPC ID: {vpc.get_id()}.\n' + \
+             f'PUB SUBNET ID: {pub_subnet.get_id()}.\n' + \
              f'Waiting: \n\n'
     dummy = input(output)
 
